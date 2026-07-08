@@ -10,11 +10,22 @@ const app = document.getElementById('app');
 // Carregar dados do JSON
 async function loadData() {
   try {
-    const response = await fetch('./data.json');
-    if (!response.ok) {
-      throw new Error('Erro ao carregar data.json');
+    // Tenta carregar do localStorage primeiro (dados salvos localmente)
+    const storedData = localStorage.getItem('curriculo-tatiana-data');
+    
+    if (storedData) {
+      currentData = JSON.parse(storedData);
+      console.log('Dados carregados do localStorage');
+    } else {
+      // Se não houver dados locais, carrega do data.json
+      const response = await fetch('./data.json');
+      if (!response.ok) {
+        throw new Error('Erro ao carregar data.json');
+      }
+      currentData = await response.json();
+      console.log('Dados carregados do data.json');
     }
-    currentData = await response.json();
+    
     render();
   } catch (error) {
     console.error('Erro ao carregar dados:', error);
@@ -510,12 +521,12 @@ function renderEditForm() {
 }
 
 // Funções auxiliares para manipulação da formação
-window.removeFormacao = function(index) {
+function removeFormacao(index) {
   currentData.formacao.splice(index, 1);
   renderEditForm();
 }
 
-window.addFormacao = function() {
+function addFormacao() {
   currentData.formacao.push({
     nivel: '',
     instituicao: '',
@@ -525,12 +536,12 @@ window.addFormacao = function() {
   renderEditForm();
 }
 
-window.removeExperiencia = function(index) {
+function removeExperiencia(index) {
   currentData.experiencia.splice(index, 1);
   renderEditForm();
 }
 
-window.addExperiencia = function() {
+function addExperiencia() {
   currentData.experiencia.push({
     empresa: '',
     periodo: '',
@@ -541,12 +552,12 @@ window.addExperiencia = function() {
   renderEditForm();
 }
 
-window.removeCurso = function(index) {
+function removeCurso(index) {
   currentData.cursos.splice(index, 1);
   renderEditForm();
 }
 
-window.addCurso = function() {
+function addCurso() {
   currentData.cursos.push({
     nome: '',
     instituicao: '',
@@ -557,7 +568,7 @@ window.addCurso = function() {
 }
 
 // Salvar alterações
-function saveEdits() {
+async function saveEdits() {
   try {
     // Atualizar dados do currentData com os valores do formulário
     currentData.nome = document.getElementById('edit-nome').value.trim();
@@ -604,15 +615,16 @@ function saveEdits() {
       cargaHoraria: el.querySelector('.edit-curso-cargaHoraria').value.trim()
     }));
 
-    // Salvar no localStorage (para uso local)
+    // Salvar no localStorage (para uso local imediato)
     localStorage.setItem('curriculo-tatiana-data', JSON.stringify(currentData));
 
-    // Exibir mensagem e recarregar
-    alert('Currículo atualizado com sucesso!');
+    alert('Alterações salvas com sucesso!\n\nAs alterações estão visíveis agora na tela.\n\nPara atualizar o currículo online (no GitHub), edite o arquivo src/data.json diretamente no GitHub.');
+
+    // Recarregar o currículo para mostrar as alterações
     loadData();
   } catch (error) {
     console.error('Erro ao salvar:', error);
-    alert('Erro ao salvar as alterações. Verifique os dados e tente novamente.');
+    alert('Erro ao salvar as alterações: ' + error.message + '\n\nTente novamente.');
   }
 }
 
