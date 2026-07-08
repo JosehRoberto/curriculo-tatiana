@@ -31,12 +31,14 @@ git branch -M main
 git push -u origin main
 ```
 
-## Passo 3: Habilitar GitHub Pages
+## Passo 3: Habilitar GitHub Pages (via GitHub Actions)
 
 1. Acesse o repositório no GitHub
 2. Vá em Settings > Pages
-3. Em "Build and deployment", selecione "main" branch
+3. Em "Build and deployment", selecione **GitHub Actions**
 4. Clique em "Save"
+
+**Importante:** Este projeto usa GitHub Actions para gerar e publicar o site automaticamente. O workflow configurado em `.github/workflows/deploy-pages.yml` faz o deploy sempre que há commit na branch `main`.
 
 O currículo estará disponível em: `https://josehroberto.github.io/curriculo-tatiana/`
 
