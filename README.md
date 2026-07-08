@@ -227,4 +227,4 @@ Para dúvidas ou problemas, entre em contato com o desenvolvedor.
 
 © 2026 Currículo de Tatiana Ferreira
 
-Licenciado sob a [MIT License](LICENSE)
+Licenciado sob a [MIT License](LICENSE)# Teste GitHub Pages
