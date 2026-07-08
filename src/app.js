@@ -459,7 +459,7 @@ function renderEditForm() {
           <div class="form-group formacao-item" data-index="${index}">
             <div class="form-actions">
               <label>Formação ${index + 1}</label>
-              <button type="button" class="remove-item-btn" onclick="removeFormacao(${index})">Remover</button>
+              <button type="button" class="remove-item-btn" data-action="remove-formacao" data-index="${index}">Remover</button>
             </div>
             <input type="text" class="edit-formacao-nivel" value="${form.nivel}" placeholder="Nível de formação">
             <input type="text" class="edit-formacao-instituicao" value="${form.instituicao}" placeholder="Instituição">
@@ -468,7 +468,7 @@ function renderEditForm() {
           </div>
         `).join('')}
       </div>
-      <button type="button" class="add-item-btn" onclick="addFormacao()">+ Adicionar Formação</button>
+      <button type="button" class="add-item-btn" data-action="add-formacao">+ Adicionar Formação</button>
     </div>
   `;
 
@@ -481,7 +481,7 @@ function renderEditForm() {
           <div class="form-group experiencia-item" data-index="${index}">
             <div class="form-actions">
               <label>Experiência ${index + 1}</label>
-              <button type="button" class="remove-item-btn" onclick="removeExperiencia(${index})">Remover</button>
+              <button type="button" class="remove-item-btn" data-action="remove-experiencia" data-index="${index}">Remover</button>
             </div>
             <input type="text" class="edit-experiencia-empresa" value="${exp.empresa}" placeholder="Empresa">
             <input type="text" class="edit-experiencia-periodo" value="${exp.periodo}" placeholder="Período">
@@ -491,7 +491,7 @@ function renderEditForm() {
           </div>
         `).join('')}
       </div>
-      <button type="button" class="add-item-btn" onclick="addExperiencia()">+ Adicionar Experiência</button>
+      <button type="button" class="add-item-btn" data-action="add-experiencia">+ Adicionar Experiência</button>
     </div>
   `;
 
@@ -504,7 +504,7 @@ function renderEditForm() {
           <div class="form-group curso-item" data-index="${index}">
             <div class="form-actions">
               <label>Curso ${index + 1}</label>
-              <button type="button" class="remove-item-btn" onclick="removeCurso(${index})">Remover</button>
+              <button type="button" class="remove-item-btn" data-action="remove-curso" data-index="${index}">Remover</button>
             </div>
             <input type="text" class="edit-curso-nome" value="${curso.nome}" placeholder="Nome do curso">
             <input type="text" class="edit-curso-instituicao" value="${curso.instituicao}" placeholder="Instituição">
@@ -513,11 +513,22 @@ function renderEditForm() {
           </div>
         `).join('')}
       </div>
-      <button type="button" class="add-item-btn" onclick="addCurso()">+ Adicionar Curso</button>
+      <button type="button" class="add-item-btn" data-action="add-curso">+ Adicionar Curso</button>
     </div>
   `;
 
   form.innerHTML = formHTML;
+
+  // Adicionar event listeners para os botões
+  const removeButtons = form.querySelectorAll('.remove-item-btn');
+  removeButtons.forEach(btn => {
+    btn.addEventListener('click', handleRemoveClick);
+  });
+
+  const addButtons = form.querySelectorAll('.add-item-btn');
+  addButtons.forEach(btn => {
+    btn.addEventListener('click', handleAddClick);
+  });
 }
 
 // Funções auxiliares para manipulação da formação
@@ -565,6 +576,32 @@ function addCurso() {
     cargaHoraria: ''
   });
   renderEditForm();
+}
+
+// Funções para tratar cliques nos botões
+function handleRemoveClick(event) {
+  const action = event.target.dataset.action;
+  const index = parseInt(event.target.dataset.index);
+  
+  if (action === 'remove-formacao') {
+    removeFormacao(index);
+  } else if (action === 'remove-experiencia') {
+    removeExperiencia(index);
+  } else if (action === 'remove-curso') {
+    removeCurso(index);
+  }
+}
+
+function handleAddClick(event) {
+  const action = event.target.dataset.action;
+  
+  if (action === 'add-formacao') {
+    addFormacao();
+  } else if (action === 'add-experiencia') {
+    addExperiencia();
+  } else if (action === 'add-curso') {
+    addCurso();
+  }
 }
 
 // Salvar alterações
@@ -618,7 +655,7 @@ async function saveEdits() {
     // Salvar no localStorage (para uso local imediato)
     localStorage.setItem('curriculo-tatiana-data', JSON.stringify(currentData));
 
-    alert('Alterações salvas com sucesso!\n\nAs alterações estão visíveis agora na tela.\n\nPara atualizar o currículo online (no GitHub), edite o arquivo src/data.json diretamente no GitHub.');
+    alert('Alterações salvas com sucesso!\n\nAs alterações estão visíveis agora na tela.');
 
     // Recarregar o currículo para mostrar as alterações
     loadData();
